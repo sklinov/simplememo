@@ -1,0 +1,13 @@
+@import url('./fonts/fonts.css');
+
+.App {
+  font-family: 'SF Pro';
+  text-align: left;
+  width: 960px;
+  padding-left: 80px;
+  padding-right: 80px;
+  margin-top: 40px;
+  margin-left: auto;
+  margin-right: auto;
+}
+

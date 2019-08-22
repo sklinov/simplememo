@@ -1,0 +1,30 @@
+.dragdrop__block {
+    position: relative;   
+}
+
+.dragdrop__border {
+    border: dashed #CCCCCC 1px;
+    background-color: rgba(255,255,255,0.8);
+    border-radius: 5px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0; 
+    right: 0;
+    z-index: 9999;
+    padding: 10px; 
+    display: flex;
+    align-items: center;       
+}
+.dragdrop__fill {
+    text-align: center; 
+}
+
+.dragdrop__heading {
+    font-weight: 400;
+}
+
+.dragdrop__text {
+    font-size: 16px;
+    max-width: 70ch;
+}
