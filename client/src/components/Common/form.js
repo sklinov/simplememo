@@ -6,8 +6,12 @@ export const form = {
     emailPlaceholder: 'Введите ваш адрес электронной почты',
     passwordLabel: 'Пароль',
     passwordPlaceholder: 'Введите ваш пароль',
-    // subjectPlaceholder: 'Введите тему сообщения',
-    // messagePlaceholder: 'Введите текст сообщения',
-    // attach: 'Прикрепить файл',
-    // buttonSubmitLabel: 'Отправить'  
+    newHeader: 'Добавить новую заметку',
+    newText: 'Вы можете добавить тему и текст сообщения, а также прикрепить файлы (их можно просто перетащить в форму)',
+    subjectLabel: 'Заголовок',
+    subjectPlaceholder: 'Введите заголовок заметки',
+    bodyLabel: 'Текст заметки',
+    bodyPlaceholder: 'Введите текст заметки',
+    addNewButtonLabel: 'Добавить',
+    attach: 'Прикрепить файл', 
 } 

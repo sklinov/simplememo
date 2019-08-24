@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { dragdrop } from '../../languages/ru'
 import styles from './DragDropFiles.module.css'
 
 export default class DragDropFiles extends Component {
