@@ -190,7 +190,7 @@ class New extends Component {
                 body: body,
             };
         }
-
+        //Submit form 
         fetch(url_memos, {
             method: method,
             body: JSON.stringify(data),
@@ -199,6 +199,26 @@ class New extends Component {
             }
         })
         .then((res) => res.json())
+        //Submit files
+        .then((res) => {
+            const { files } = this.state;
+            const method = 'PUT';
+            if(files.length > 0 && memo_id === undefined) {
+                if(res.hasOwnPropery('insertId')) {
+                    memo_id = res.insertId;
+                }
+            }
+            const files_url = '/api/files/'+memo_id;
+            files.forEach(file => {
+                fetch(files_url, {
+                    method: method,
+                    body: {
+                        name: file.name,
+                        contents: file 
+                    }
+                })
+            })
+        })
         .then((res) => {
             this.clearForm();
             this.setState({submitting: false, submitted: true},
@@ -208,7 +228,7 @@ class New extends Component {
     }
 
     redirection = () => {
-        setTimeout(() => this.setState({redirect:true}) , 3000)
+        setTimeout(() => this.setState({redirect:true}) , 5000)
     }
 
     render() {

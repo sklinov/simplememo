@@ -111,15 +111,15 @@ app.get('/api/files', async (req, res) => {
 
 // Get file contents by file id
 app.get('/api/files/:id', async (req, res) => {
-    var file_id = req.query.file_id;
+    var file_id = req.params.file_id;
     const query = `SELECT name, contents FROM files WHERE file_id = ${file_id}`;
     var result = await dbQuery(query);
     res.json(result);
 })
 
 // Add a file
-app.put('/api/files/', async (req, res) => {
-    var memo_id = req.body.memo_id;
+app.put('/api/files/:memo_id', async (req, res) => {
+    var memo_id = req.params.memo_id;
     var name = req.body.name;
     var contents = req.body.contents;
     const query = `INSERT INTO files (memo_id, name, contents) VALUES (${memo_id},'${name}','${contents}')`;
