@@ -25,6 +25,8 @@ app.get('/api/users', async (req, res) => {
 app.post('/api/users', async (req, res) => {
     var email = req.body.email;
     var password = req.body.password; 
+    console.log(email, password);
+    //console.log(req);
     const query = `SELECT user_id, email, password FROM users WHERE email = '${email}'`;
     var users = await dbQuery(query);
     

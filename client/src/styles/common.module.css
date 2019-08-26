@@ -3,10 +3,17 @@
     background-color: white;
     padding: 32px;
     border-radius: 7px;
+    margin-bottom: 20px;
 }
 
 .form__group {
     margin: 20px;
+}
+
+.form__groupdistibuted {
+    display: flex;
+    justify-content: space-between;
+    align-items: center
 }
 
 .form__label {
@@ -96,12 +103,29 @@
     cursor: pointer;
 }
 
+.form__edit {
+    cursor: pointer;
+    display: inline;
+    margin-right: 20px;
+}
+
+.form__icon {
+    height: 16px;
+    width: 16px;
+}
+
+.form__iconlarge {
+    height: 40px;
+    width: 40px;
+    padding-left: 40px;
+}
+
 .form__filebutton {
     display: none;
 }
 
 .form__button {
-    width: 140px;
+    min-width: 140px;
     height: 40px;
     border-radius: 5px;
     color: white;

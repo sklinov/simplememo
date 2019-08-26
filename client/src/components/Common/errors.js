@@ -5,4 +5,5 @@ export const errors = {
     passwordTooShort: 'Пароль должен быть более 5 символов',
     subjectEmpty: 'Заголовок не может быть пустым',
     bodyEmpty: 'Текст заметки не может быть пустым',
+    wrongPassword: 'Неверный пароль'
 }

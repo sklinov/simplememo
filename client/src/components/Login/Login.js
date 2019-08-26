@@ -1,9 +1,16 @@
 import React, { Component } from 'react'
+import { Redirect, Link } from 'react-router-dom'
+
+import { connect } from 'react-redux'
+import { login } from '../../redux/actions/loginActions'
+
+import classNames from 'classnames'
 import {form} from '../Common/form'
+import {errors} from '../Common/errors'
 import {leftSideTrim, validateField} from '../../utils/index'
 import common from '../../styles/common.module.css'
 
-export default class Login extends Component {
+class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -41,66 +48,112 @@ export default class Login extends Component {
         }
     }
 
+    submitForm = (e) => {
+        e.preventDefault();
+        this.props.login(this.state.email, this.state.password);
+    }
+
     render() {
-        const {email, password, validationErrors, formIsValid } = this.state;
-        return (
-            <div className={common.form__container}>
-                <form>
-                    <div className={common.form__group}>
-                    <h2>{form.loginHeader}</h2>
-                    <p>{form.loginText}</p>
+        const { email, password, validationErrors, formIsValid } = this.state;
+        const { loggedIn, wrongPassword, user} = this.props;
+        if(!loggedIn)
+        {
+            return (
+                <div className={common.form__container}>
+                    <form>
+                        <div className={common.form__group}>
+                        <h2>{form.loginHeader}</h2>
+                        <p>{form.loginText}</p>
+                        </div>
+                        <div className={common.form__group}>
+                            <label htmlFor="email"
+                                className={common.form__label}>
+                                {form.emailLabel}
+                            </label>
+                            <br />
+                            <input 
+                                type="email"
+                                className={common.form__input}  
+                                placeholder={form.emailPlaceholder}
+                                name="email"
+                                value={email} 
+                                onChange={this.handleChange}
+                                onBlur={(e) => this.validateField(e)}
+                                data-test="email" 
+                            />
+                            <div className={common.form__errorcontainer}>
+                                <div className={common.form__error}>{validationErrors.email}</div>
+                            </div>    
+                        </div>
+                        <div className={common.form__group}>
+                            <label htmlFor="password"
+                                className={common.form__label}>
+                                {form.passwordLabel}
+                            </label>
+                            <br />
+                            <input 
+                                type="password"
+                                className={common.form__input}
+                                placeholder={form.passwordPlaceholder}  
+                                name="password"
+                                value={password} 
+                                onChange={this.handleChange}
+                                onBlur={(e) => this.validateField(e)}
+                                data-test="password" 
+                            />
+                            <div className={common.form__errorcontainer}>
+                                <div className={common.form__error}>{validationErrors.password}</div>
+                            </div>    
+                        </div>
+                        <div className={common.form__group} data-test="form__group">
+                            <button
+                                className={common.form__button}
+                                onClick={this.submitForm}
+                                disabled={!formIsValid}
+                            >
+                                {form.loginButtonLabel}
+                            </button>
+                        </div>
+                        {
+                            wrongPassword && 
+                            <div className={common.form__group} data-test="form__group">
+                                <div className={common.form__errorcontainer}>
+                                    <div className={common.form__error}>{errors.wrongPassword}</div>
+                                </div>
+                            </div>
+                        }
+                        
+                        
+
+                    </form>
+                </div>
+                
+            )
+        }
+        else if(loggedIn) {
+            return (
+                <div className={common.form__container}>
+                    <div className={classNames(common.form__group, common.form__groupdistibuted)}>
+                        Вы вошли как {user.email}
+                        <Link to='/new'>
+                            <button className={common.form__button} > {form.addNewButtonInHeaderLabel} </button>
+                        </Link>
                     </div>
-                    <div className={common.form__group}>
-                        <label htmlFor="email"
-                            className={common.form__label}>
-                            {form.emailLabel}
-                        </label>
-                        <br />
-                        <input 
-                            type="email"
-                            className={common.form__input}  
-                            placeholder={form.emailPlaceholder}
-                            name="email"
-                            value={email} 
-                            onChange={this.handleChange}
-                            onBlur={(e) => this.validateField(e)}
-                            data-test="email" 
-                        />
-                        <div className={common.form__errorcontainer}>
-                            <div className={common.form__error}>{validationErrors.email}</div>
-                        </div>    
-                    </div>
-                    <div className={common.form__group}>
-                        <label htmlFor="password"
-                            className={common.form__label}>
-                            {form.passwordLabel}
-                        </label>
-                        <br />
-                        <input 
-                            type="password"
-                            className={common.form__input}
-                            placeholder={form.passwordPlaceholder}  
-                            name="password"
-                            value={password} 
-                            onChange={this.handleChange}
-                            onBlur={(e) => this.validateField(e)}
-                            data-test="password" 
-                        />
-                        <div className={common.form__errorcontainer}>
-                            <div className={common.form__error}>{validationErrors.password}</div>
-                        </div>    
-                    </div>
-                    <div className={common.form__group} data-test="form__group">
-                        <button
-                            className={common.form__button}
-                            onClick={this.submitForm}
-                            disabled={!formIsValid}
-                        >
-                            {form.loginButtonLabel}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        )
+                    
+                    <Redirect to='/memos'/>
+                </div>
+                
+            )
+            
+        }
+        
     }
 }
+
+const mapStateToProps = state => ({
+    loggedIn: state.login.loggedIn,
+    wrongPassword: state.login.wrongPassword, 
+    user: state.login.user
+})
+
+export default connect(mapStateToProps ,{login})(Login); 

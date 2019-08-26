@@ -1,0 +1,13 @@
+.item__container {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 10px;
+}
+.container__controls {
+    display: inline-flex;
+    justify-content: flex-end;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+    
+}
