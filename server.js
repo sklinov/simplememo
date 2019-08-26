@@ -1,4 +1,5 @@
-const express = require('express')
+const express = require('express');
+const path = require('path');
 const bcrypt = require('bcrypt');
 var dbQuery = require('./db/db');
 
@@ -7,6 +8,7 @@ const port = process.env.port || 5000;
 
 app.use(express.json()) 
 app.use(express.urlencoded({ extended: true }))
+app.use(express.static(path.join(__dirname, 'client/build')))
 
 app.get('/api', (req, res) => res.send('This is SFC APP!'))
 
@@ -52,7 +54,6 @@ async function addUser(email, password) {
     var hash = bcrypt.hashSync(password, 10);
     const query = `INSERT INTO users (email,password) VALUES ('${email}','${hash}')`;
     var result = await dbQuery(query);
-    console.log('ADD USER:', result);
     return result;
 }
 

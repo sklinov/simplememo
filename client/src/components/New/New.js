@@ -79,10 +79,7 @@ class New extends Component {
         this.setState({submitting: true});
         const { user_id } = this.props.user;
         const { subject, body } = this.state;
-
-        const {memo_id} = this.props.location.state !== undefined ? this.props.location.state.memo : undefined ;
-        console.log(memo_id);
-
+        const memo_id = this.props.location.state !== undefined ? this.props.location.state.memo.memo_id : undefined ;
         var method;
         var url_memos;
         var data;
@@ -123,7 +120,7 @@ class New extends Component {
     }
 
     redirection = () => {
-        setTimeout(() => this.setState({redirect:true}) , 5000)
+        setTimeout(() => this.setState({redirect:true}) , 3000)
     }
 
     render() {
@@ -176,7 +173,7 @@ class New extends Component {
                         </div>
                     </div>
 
-                    <div className={common.form__group} data-test="form__group">
+                    <div className={classNames(common.form__group, common.form__groupdistibuted)} data-test="form__group">
                             <button
                                 className={common.form__button}
                                 onClick={this.submitForm}

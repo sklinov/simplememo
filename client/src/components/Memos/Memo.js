@@ -20,7 +20,7 @@ export default class Memo extends Component {
                 <h3>{memo.subject}</h3>
                 <p>{memo.body}</p>
                 <div className={styles.container__controls}>
-                    <Link to={{pathname: '/new', state: {memo: memo}}} style={{textDecoration: 'none'}}>
+                    <Link to={{pathname: '/new', state: {memo: memo}}} className={styles.link}>
                         <span className={common.form__edit}>
                                         <img src={edit} className={common.form__icon} alt="Редактировать" />
                                         Редактировать
