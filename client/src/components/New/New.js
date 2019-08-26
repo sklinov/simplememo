@@ -2,11 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Redirect} from 'react-router-dom'
 import classNames from 'classnames'
-import uuid from 'uuid'
-import DragDropFiles from '../DragDropFiles/DragDropFiles'
 import Spinner from '../Common/Spinner'
-import paperclip from '../../imgs/paperclip.svg'
-import trash from '../../imgs/trash.svg'
 import success from '../../imgs/checked.svg'
 import {form} from '../Common/form'
 import {leftSideTrim, validateField} from '../../utils/index'
@@ -19,7 +15,6 @@ class New extends Component {
         this.state = {
             subject: '',
             body: '',
-            files: [],
             validationErrors: {
                 subject: false,
                 body: false,
@@ -47,7 +42,6 @@ class New extends Component {
         this.setState({
             subject: '',
             body: '',
-            files: [],
             validationErrors: {
                 subject: false,
                 body: false,
@@ -65,83 +59,6 @@ class New extends Component {
         this.validateForm();
     }
 
-    addFiles = (e) => {
-        var files = [];
-        if(e.target.files.length>0)
-        {
-            files.push(e.target.files[0]);
-            var checkedFiles = this.checkFilesExtAndSize(files);
-            this.addFilesToState(checkedFiles);
-        }
-    }
-
-    handleDragDropFile = (fileList) => {
-        const files = [...fileList];
-        var checkedFiles = this.checkFilesExtAndSize(files);
-        this.addFilesToState(checkedFiles);        
-    }
-
-    checkFilesExtAndSize = (files) => {
-        const sizeLimit = 5242880;
-        const totalSizeLimit = 20971520;
-        const fileTypes = [
-            'image/png',
-            'image/jpg',
-            'image/jpeg',
-            'image/gif',
-            'application/zip',
-            'application/pdf',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/msword'
-        ];
-
-        const fileSizes = this.state.files.map(file => file.size);
-        var totalSize = fileSizes.reduce( (total, size) => total+size, 0);
-        console.log(totalSize); 
-        var checkedfiles = files.filter(file => {
-            if(fileTypes.indexOf(file.type) !== -1 &&
-               file.size <=sizeLimit && 
-               file.size+totalSize <= totalSizeLimit)
-            {   
-                totalSize +=file.size;
-                return file;
-            }
-            else {
-                console.log(file, fileTypes.indexOf(file.type), file.type, file.size);
-                alert(`Невозможно загрузить ${file.name}. Проверьте размер (< 5Мб) и тип файла. ${file.type}, ${file.size}`);
-                return null;
-            }
-        })
-        return checkedfiles;
-    }
-
-    addFilesToState = (files) => {
-        if(files.length > 0)
-        {
-            this.setState({files: [...this.state.files, ...files]});
-        }
-    }
-
-    deleteFile = (e, fileToDelete) => {
-        e.preventDefault();
-        const { files } = this.state;
-        var newFiles = files.filter(file => file!== fileToDelete);
-        this.setState({files: newFiles});
-    }
-
-    processFileName = (filename) => {
-        const max_filename_length = 20;
-        if(filename.length > max_filename_length) {
-            let end = filename.slice(-4);
-            let start = filename.slice(0,13);
-            return start + '...' + end;
-        }
-        else {
-            return filename;
-        }   
-    }
 
     validateForm = () => {
         const { subject, body, validationErrors } = this.state;
@@ -170,8 +87,6 @@ class New extends Component {
         var url_memos;
         var data;
 
-        //const url_files = '/api/files/'
-
         if(this.props.user.user_id !== undefined && memo_id === undefined) {
             url_memos = '/api/memos/';
             method = 'PUT';
@@ -199,26 +114,6 @@ class New extends Component {
             }
         })
         .then((res) => res.json())
-        //Submit files
-        .then((res) => {
-            const { files } = this.state;
-            const method = 'PUT';
-            if(files.length > 0 && memo_id === undefined) {
-                if(res.hasOwnPropery('insertId')) {
-                    memo_id = res.insertId;
-                }
-            }
-            const files_url = '/api/files/'+memo_id;
-            files.forEach(file => {
-                fetch(files_url, {
-                    method: method,
-                    body: {
-                        name: file.name,
-                        contents: file 
-                    }
-                })
-            })
-        })
         .then((res) => {
             this.clearForm();
             this.setState({submitting: false, submitted: true},
@@ -232,7 +127,7 @@ class New extends Component {
     }
 
     render() {
-        const {subject, body, files, validationErrors, formIsValid, submitting, submitted, redirect} = this.state;
+        const {subject, body, validationErrors, formIsValid, submitting, submitted, redirect} = this.state;
         const { loggedIn, user } = this.props;
         if(loggedIn && user !== undefined)
         {
@@ -241,9 +136,7 @@ class New extends Component {
                 <form>
                     <div className={common.form__group}>
                         <h2>{form.newHeader}</h2>
-                        <p>{form.newText}</p>
                     </div>
-                    <DragDropFiles handleDrop={this.handleDragDropFile}>
                     <div className={common.form__group}>
                         <label htmlFor="subject"
                             className={common.form__label}>
@@ -284,47 +177,6 @@ class New extends Component {
                     </div>
 
                     <div className={common.form__group} data-test="form__group">
-                        {    
-                            files !== undefined && files.length > 0 && 
-                                <div className={common.form__files}>
-                                {
-                                    files.map(file => {
-                                        return (
-                                            <div className={common.form__filecontainer} key={uuid.v4()}>
-                                                <img src={paperclip} className={common.form__paperclipdesaturated} alt="paperclip" />
-                                                <span className={common.form__filename} title={file.name}>
-                                                    {this.processFileName(file.name)}
-                                                </span>
-                                                <span className={common.form__filedelete}
-                                                    onClick={(e) => this.deleteFile(e, file)}>
-                                                    <img src={trash} alt="Удалить" />
-                                                    Удалить
-                                                </span>
-                                            </div>
-                                        )
-                                    })
-                                }
-                                </div>   
-                        }
-                        <label htmlFor="files" 
-                                    className={common.form__label}>
-                                    <img src={paperclip} alt="paperclip" />
-                                    <span className={classNames(common.form__label, common.form__labelblue, common.form__link)}>
-                                        {form.attach}
-                                    </span> 
-                        <input 
-                            type="file"
-                            className={common.form__filebutton}  
-                            placeholder={form.subjectPlaceholder}
-                            id="files"
-                            name="files"
-                            onChange={this.addFiles}
-                        />
-                        </label>
-                                
-                    </div>
-
-                    <div className={common.form__group} data-test="form__group">
                             <button
                                 className={common.form__button}
                                 onClick={this.submitForm}
@@ -346,7 +198,6 @@ class New extends Component {
                                 redirect && <Redirect to='/memos' />
                             }
                     </div>
-                    </DragDropFiles>
                 </form>   
             </div>
         )

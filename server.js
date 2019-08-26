@@ -8,17 +8,9 @@ const port = process.env.port || 5000;
 app.use(express.json()) 
 app.use(express.urlencoded({ extended: true }))
 
-app.get('/api', (req, reexs) => res.send('This is SFC APP!'))
+app.get('/api', (req, res) => res.send('This is SFC APP!'))
 
 // USER METHODS
-const request = '---THIS IS A REQUEST---';
-
-//app.get('/api/users', (req, res) => res.send(dbQuery(request)))
-app.get('/api/users', async (req, res) => {
-    const query = 'SELECT * FROM users';
-    var result = await dbQuery(query);
-    res.send(result);
-})
 
 // Authenticate 
 
@@ -72,6 +64,7 @@ app.get('/api/memos', async (req, res) => {
     var result = await dbQuery(query);
     res.json(result);
 })
+
 // Edit a memo
 app.post('/api/memos/:id', async (req, res) => {
     var memo_id = req.params.id;
@@ -100,39 +93,5 @@ app.delete('/api/memos/:id', async (req, res) => {
     res.json(result);
 })
 
-// FILES METHODS
-// Get files list by memo id
-app.get('/api/files', async (req, res) => {
-    var memo_id = req.query.memo_id;
-    const query = `SELECT memo_id, file_id, name FROM files WHERE memo_id = ${memo_id}`;
-    var result = await dbQuery(query);
-    res.json(result);
-})
-
-// Get file contents by file id
-app.get('/api/files/:id', async (req, res) => {
-    var file_id = req.params.file_id;
-    const query = `SELECT name, contents FROM files WHERE file_id = ${file_id}`;
-    var result = await dbQuery(query);
-    res.json(result);
-})
-
-// Add a file
-app.put('/api/files/:memo_id', async (req, res) => {
-    var memo_id = req.params.memo_id;
-    var name = req.body.name;
-    var contents = req.body.contents;
-    const query = `INSERT INTO files (memo_id, name, contents) VALUES (${memo_id},'${name}','${contents}')`;
-    var result = await dbQuery(query);
-    res.json(result);
-})
-
-// Delete a file
-app.delete('/api/files/:id', async (req, res) => {
-    var file_id = req.params.id;
-    const query = `DELETE FROM files WHERE file_id = ${file_id}`;
-    var result = await dbQuery(query);
-    res.json(result);
-})
 
 app.listen(port, () => console.log(`Simple memo app is listening on port ${port}!`))
