@@ -52,7 +52,6 @@ async function addUser(email, password) {
     var hash = bcrypt.hashSync(password, 10);
     const query = `INSERT INTO users (email,password) VALUES ('${email}','${hash}')`;
     var result = await dbQuery(query);
-    console.log('ADD USER:', result);
     return result;
 }
 
