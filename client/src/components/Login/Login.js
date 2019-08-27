@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Redirect, Link } from 'react-router-dom'
+//import { Redirect, Link } from 'react-router-dom'
 
 import { connect } from 'react-redux'
 import { login, logout } from '../../redux/actions/loginActions'
@@ -156,16 +156,12 @@ class Login extends Component {
             return (
                 <div className={common.form__container}>
                     <div className={classNames(common.form__group, common.form__groupdistibuted)}>
-                        <div>
+                        {/* <div> */}
                             {form.enteredAs}{user.email}
                             <button className={common.form__button} style={{marginLeft: '20px'}} onClick={(e) => this.logOut(e)}> {form.logoutButtonLabel} </button>
-                        </div>
-                        <Link to='/new'>
-                            <button className={common.form__button} > {form.addNewButtonInHeaderLabel} </button>
-                        </Link>
+                        {/* </div> */}
+                        {/* <button className={common.form__button} > {form.addNewButtonInHeaderLabel} </button> */}
                     </div>
-                    
-                    <Redirect to='/memos'/>
                 </div>
                 
             )

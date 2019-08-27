@@ -17,12 +17,15 @@ class Memos extends Component {
     componentDidMount() {
         this.loadMemos();
     }
-    componentDidUpdate() {
-        this.loadMemos();
+    componentDidUpdate(prevProps) {
+        if (this.props.memoReloadTrigger !== prevProps.memoReloadTrigger ||
+            this.props.user !== prevProps.user) {
+            this.loadMemos();
+          }
     }
 
     loadMemos = () => {
-        if(!this.state.isLoaded && this.props.user && this.props.user.user_id !== undefined)
+        if(this.props.user && this.props.user.user_id !== undefined)
         {
             const { user_id } = this.props.user;
             var url = '/api/memos?user_id='+user_id;
@@ -98,7 +101,8 @@ class Memos extends Component {
 
 const mapStateToProps = state => ({
     loggedIn: state.login.loggedIn,
-    user: state.login.user
+    user: state.login.user,
+    memoReloadTrigger: state.memo.memoReloadTrigger
 })
 
 export default connect(mapStateToProps ,{})(Memos); 

@@ -3,7 +3,7 @@ import { LOGIN, LOGOUT } from '../actions/types'
 const initialState = {
     loggedIn: false,
     wrongPassword: false,
-    user: {}
+    user: {},
 }
 
 export default function(state = initialState, action) {
