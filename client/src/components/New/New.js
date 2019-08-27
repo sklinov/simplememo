@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Redirect} from 'react-router-dom'
+import { memoSubmit } from '../../redux/actions/memoActions'
 import classNames from 'classnames'
 import Spinner from '../Common/Spinner'
 import success from '../../imgs/checked.svg'
@@ -22,20 +22,29 @@ class New extends Component {
             formIsValid: false,
             submitting: false,
             submitted: false,
-            redirect: false,
         }
         this.validateField = validateField.bind(this, this.state)
     }
 
-    componentDidMount() {
-        const memo = this.props.location.state !== undefined ? this.props.location.state.memo : undefined ;
-        if(memo !== undefined) {
-            this.setState({
-                subject: memo.subject,
-                body: memo.body,
-                files: memo.files
-            });
-        }
+    componentDidUpdate(prevProps) {
+        if (this.props.memoToEdit !== prevProps.memoToEdit) {
+            this.fillValues(this.props.memoToEdit);
+            window.scrollTo({top: 0, behaviour: "smooth"})
+          }
+    }
+
+    fillValues = (memo) => {
+        this.setState({
+            subject: memo.subject,
+            body: memo.body,
+            validationErrors: {
+                subject: false,
+                body: false,
+            },
+            formIsValid: false,
+            submitting: false,
+            submitted: false,
+        })
     }
 
     clearForm = () => {
@@ -79,7 +88,7 @@ class New extends Component {
         this.setState({submitting: true});
         const { user_id } = this.props.user;
         const { subject, body } = this.state;
-        const memo_id = this.props.location.state !== undefined ? this.props.location.state.memo.memo_id : undefined ;
+        const memo_id = this.props.memoToEdit !== undefined ? this.props.memoToEdit.memo_id : undefined ;
         var method;
         var url_memos;
         var data;
@@ -111,28 +120,27 @@ class New extends Component {
             }
         })
         .then((res) => res.json())
-        .then((res) => {
+        .then(() => {
             this.clearForm();
             this.setState({submitting: false, submitted: true},
-                this.redirection
+                this.props.memoSubmit()
             )
+        })
+        .then(()=> {
+            setTimeout(this.setState({submitted:false}), 3000)
         })
     }
 
-    redirection = () => {
-        setTimeout(() => this.setState({redirect:true}) , 3000)
-    }
-
     render() {
-        const {subject, body, validationErrors, formIsValid, submitting, submitted, redirect} = this.state;
-        const { loggedIn, user } = this.props;
+        const {subject, body, validationErrors, formIsValid, submitting, submitted} = this.state;
+        const { loggedIn, user, memoToEdit } = this.props;
         if(loggedIn && user !== undefined)
         {
         return (
-            <div className={common.form__container}>
+            <div className={ common.form__container }>
                 <form>
                     <div className={common.form__group}>
-                        <h2>{form.newHeader}</h2>
+                        <h2>{ Object.entries(memoToEdit).length !== 0 ? form.editHeader : form.newHeader}</h2>
                     </div>
                     <div className={common.form__group}>
                         <label htmlFor="subject"
@@ -188,11 +196,7 @@ class New extends Component {
                                 submitted && 
                                 <React.Fragment>
                                     <img src={success} className={common.form__iconlarge} alt='Заметка добавлена' />
-                                    <span>{form.redirect}</span>
                                 </React.Fragment>
-                            }
-                            {
-                                redirect && <Redirect to='/memos' />
                             }
                     </div>
                 </form>   
@@ -207,7 +211,8 @@ class New extends Component {
 
 const mapStateToProps = state => ({
     loggedIn: state.login.loggedIn,
-    user: state.login.user
+    user: state.login.user,
+    memoToEdit: state.memo.memoToEdit
 })
 
-export default connect(mapStateToProps ,{})(New); 
+export default connect(mapStateToProps ,{memoSubmit})(New); 
