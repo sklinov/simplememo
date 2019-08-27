@@ -16,9 +16,9 @@ const history = new createBrowserHistory();
 
 function App() {
   return (
-    <Provider store={store}>
+    <Provider store={store} data-test="app">
       <Router history={history}>
-        <div className="App">
+        <div className="App" >
           <Logo />
           <Route path='/' component={Login} />
           <Route path='/memos' component={Memos} />

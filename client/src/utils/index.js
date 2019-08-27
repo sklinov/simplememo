@@ -1,4 +1,8 @@
 import { errors } from '../components/Common/errors'
+import { createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
+import rootReducer from '../redux/reducers/index'
+
 
 export const leftSideTrim = (value) => {
     if(value === null) 
@@ -42,4 +46,15 @@ export const validateField = function(state,e) {
         default:
             break;
     }
+}
+
+export const findByTestAttr = (component, attr) => {
+    const wrapper = component.find(`[data-test="${attr}"]`);
+    return wrapper;
+}
+
+export const testStore  = (initialState ) => {
+    const middleware = [thunk];
+    const createStorewithMiddleware = applyMiddleware(...middleware)(createStore)
+    return createStorewithMiddleware(rootReducer, initialState);
 }
