@@ -1,4 +1,4 @@
-import { LOGIN } from './types'
+import { LOGIN, LOGOUT } from './types'
 
 export const login = (email, password) => (dispatch) => {   
         const url = '/api/users/'
@@ -22,4 +22,10 @@ export const login = (email, password) => (dispatch) => {
             }
         ))
         ;
+}
+
+export const logout = () => (dispatch) => {
+    dispatch({
+        type: LOGOUT
+    })
 }
