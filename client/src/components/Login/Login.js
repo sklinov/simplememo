@@ -2,13 +2,23 @@ import React, { Component } from 'react'
 import { Redirect, Link } from 'react-router-dom'
 
 import { connect } from 'react-redux'
-import { login } from '../../redux/actions/loginActions'
+import { login, logout } from '../../redux/actions/loginActions'
 
 import classNames from 'classnames'
 import {form} from '../Common/form'
 import {errors} from '../Common/errors'
 import {leftSideTrim, validateField} from '../../utils/index'
 import common from '../../styles/common.module.css'
+
+// const initialState = {
+//     email: "",
+//     password: "",
+//     validationErrors: {
+//         email: false,
+//         password: false,
+//     },
+//     formIsValid: false 
+// }
 
 class Login extends Component {
     constructor(props) {
@@ -51,6 +61,18 @@ class Login extends Component {
     submitForm = (e) => {
         e.preventDefault();
         this.props.login(this.state.email, this.state.password);
+    }
+
+    logOut = (e) => {
+        e.preventDefault();
+        this.setState({email: "",
+                        password: "",
+                        validationErrors: {
+                            email: false,
+                            password: false,
+                        },
+                        formIsValid: false}, 
+                        this.props.logout());   
     }
 
     render() {
@@ -134,7 +156,10 @@ class Login extends Component {
             return (
                 <div className={common.form__container}>
                     <div className={classNames(common.form__group, common.form__groupdistibuted)}>
-                        Вы вошли как {user.email}
+                        <div>
+                            {form.enteredAs}{user.email}
+                            <button className={common.form__button} style={{marginLeft: '20px'}} onClick={(e) => this.logOut(e)}> {form.logoutButtonLabel} </button>
+                        </div>
                         <Link to='/new'>
                             <button className={common.form__button} > {form.addNewButtonInHeaderLabel} </button>
                         </Link>
@@ -156,4 +181,4 @@ const mapStateToProps = state => ({
     user: state.login.user
 })
 
-export default connect(mapStateToProps ,{login})(Login); 
+export default connect(mapStateToProps ,{login, logout})(Login); 
